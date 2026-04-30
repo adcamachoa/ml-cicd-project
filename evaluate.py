@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, f1_score, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
 # 1. Cargar datos de prueba
-drug_df = pd.read_csv("Data/drug.csv")
+drug_df = pd.read_csv("data/drug.csv")
 X = drug_df.drop("Drug", axis=1)
 y = drug_df.Drug.values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=125)

@@ -39,4 +39,4 @@ jobs:
           hf upload andresdcamacho/drug-classification app.py --repo-type space
           hf upload andresdcamacho/drug-classification requirements.txt --repo-type space
           hf upload andresdcamacho/drug-classification Model/ Model/ --repo-type space
-          hf upload andresdcamacho/drug-classification Data/ Data/ --repo-type space
+          hf upload andresdcamacho/drug-classification data/ data/ --repo-type space
