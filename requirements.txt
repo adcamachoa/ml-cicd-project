@@ -1,4 +1,6 @@
 scikit-learn
 pandas
 matplotlib
-dvc
+huggingface_hub
+gradio
+skops

@@ -28,15 +28,15 @@ jobs:
         run: |
           python model.py
 
-      - name: 🚀 Desplegar a Hugging Face Hub (Nuevo CLI 'hf')
+      - name: 🚀 Desplegar a Hugging Face Spaces (Nuevo CLI 'hf')
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           # 1. Iniciar sesión con el nuevo comando
           hf auth login --token $HF_TOKEN
           
-          # 2. Crear el repositorio (el || true evita que falle si ya existe)
-          hf repos create mi-primer-modelo-cicd --type model || true
-          
-          # 3. Subir el archivo (Sintaxis: hf upload <repo> <archivo_local> <ruta_destino>)
-          hf upload andresdcamacho/mi-primer-modelo-cicd model.pkl
+          # 2. Subir los archivos esenciales al Space
+          hf upload andresdcamacho/drug-classification app.py --repo-type space
+          hf upload andresdcamacho/drug-classification requirements.txt --repo-type space
+          hf upload andresdcamacho/drug-classification Model/ Model/ --repo-type space
+          hf upload andresdcamacho/drug-classification Data/ Data/ --repo-type space

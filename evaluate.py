@@ -1,28 +1,31 @@
 import os
-import pickle
+import pandas as pd
+import skops.io as sio
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
-from sklearn.datasets import make_classification
-from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 
-# 1. Generar los mismos datos de prueba
-X, y = make_classification(n_samples=1000, n_features=4, random_state=42)
+# 1. Cargar datos de prueba
+drug_df = pd.read_csv("Data/drug.csv")
+X = drug_df.drop("Drug", axis=1)
+y = drug_df.Drug.values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=125)
 
-# 2. Cargar el modelo
-with open("model.pkl", "rb") as f:
-    clf = pickle.load(f)
+# 2. Cargar el modelo seguro
+untrusted_types = sio.get_untrusted_types(file="Model/drug_pipeline.skops")
+pipe = sio.load("Model/drug_pipeline.skops", trusted=untrusted_types)
 
 # 3. Evaluar
-predictions = clf.predict(X)
-accuracy = accuracy_score(y, predictions)
+predictions = pipe.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+f1 = f1_score(y_test, predictions, average="macro")
 
-# 4. Crear la carpeta 'results' si no existe (¡La solución mágica!)
+# 4. Guardar resultados
 os.makedirs("results", exist_ok=True)
-
-# 5. Guardar las métricas en un archivo de texto
 with open("results/metrics.txt", "w") as outfile:
-    outfile.write(f"Accuracy: {accuracy:.2f}\n")
+    outfile.write(f"Accuracy: {accuracy:.2f}\nF1 Score: {f1:.2f}\n")
 
-# 6. Generar y guardar una gráfica (Matriz de confusión)
-disp = ConfusionMatrixDisplay.from_estimator(clf, X, y, normalize="true", cmap="Blues")
-plt.savefig("results/plot.png")
-print("Evaluación completada. Métricas y gráfica guardadas en /results.")
+# 5. Generar gráfica
+cm = ConfusionMatrixDisplay.from_predictions(y_test, predictions, labels=pipe.classes_)
+plt.savefig("results/model_results.png", dpi=120)
+print("Evaluación completada.")
