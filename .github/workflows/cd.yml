@@ -8,11 +8,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # Actualizamos a v4 para evitar el aviso de Node.js
       - name: 📥 Checkout del código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # Actualizamos a v5 para evitar el aviso de Node.js
       - name: 🐍 Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -20,22 +22,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # Instalamos la librería de Hugging Face para usar su CLI
           pip install huggingface_hub
 
       - name: ⚙️ Entrenar Modelo (Generar artefacto)
         run: |
           python model.py
 
-      - name: 🚀 Desplegar a Hugging Face Hub
+      - name: 🚀 Desplegar a Hugging Face Hub (Nuevo CLI 'hf')
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 1. Iniciar sesión usando el token seguro
-          huggingface-cli login --token $HF_TOKEN
+          # 1. Iniciar sesión con el nuevo comando
+          hf auth login --token $HF_TOKEN
           
-          # 2. Crear un repositorio en Hugging Face (si no existe ya)
-          huggingface-cli repo create mi-primer-modelo-cicd --type model --yes || true
+          # 2. Crear el repositorio (el || true evita que falle si ya existe)
+          hf repos create mi-primer-modelo-cicd --type model || true
           
-          # 3. Subir el archivo model.pkl a ese repositorio
-          huggingface-cli upload andresdcamacho/mi-primer-modelo-cicd model.pkl --repo-type model
+          # 3. Subir el archivo (Sintaxis: hf upload <repo> <archivo_local> <ruta_destino>)
+          hf upload andresdcamacho/mi-primer-modelo-cicd model.pkl .
