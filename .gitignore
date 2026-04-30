@@ -1,0 +1,25 @@
+# Entornos virtuales
+venv/
+env/
+.env
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Archivos de Machine Learning y Resultados locales
+# (Dejamos que GitHub Actions genere los suyos propios)
+results/
+*.pkl
+*.model
+*.h5
+*.joblib
+
+# CML reportes locales
+report.md
+metrics.txt
+plot.png

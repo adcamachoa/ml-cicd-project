@@ -1,0 +1,51 @@
+name: CI Pipeline - ML
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  train-and-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout del código
+        uses: actions/checkout@v3
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: ⚙️ Entrenar y Evaluar Modelo
+        run: |
+          python model.py
+          python evaluate.py
+
+      - name: 🚀 Configurar CML (Continuous Machine Learning)
+        uses: iterative/setup-cml@v2
+
+      - name: 📊 Generar Reporte en GitHub
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Crear el título del reporte
+          echo "# 📊 Resultados de la Evaluación del Modelo" > report.md
+          
+          # Insertar las métricas de texto
+          echo "### Métricas:" >> report.md
+          cat results/metrics.txt >> report.md
+          echo "" >> report.md
+          
+          # Publicar la gráfica usando CML y agregarla al reporte
+          echo "### Matriz de Confusión:" >> report.md
+          cml publish results/plot.png --md >> report.md
+          
+          # Enviar el reporte como comentario en el Commit o Pull Request
+          cml send-comment report.md
