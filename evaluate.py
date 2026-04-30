@@ -27,5 +27,5 @@ with open("results/metrics.txt", "w") as outfile:
 
 # 5. Generar gráfica
 cm = ConfusionMatrixDisplay.from_predictions(y_test, predictions, labels=pipe.classes_)
-plt.savefig("results/model_results.png", dpi=120)
+plt.savefig("results/plot.png", dpi=120)
 print("Evaluación completada.")
