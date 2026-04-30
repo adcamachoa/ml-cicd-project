@@ -1,3 +1,4 @@
+import os
 import pickle
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
@@ -14,11 +15,14 @@ with open("model.pkl", "rb") as f:
 predictions = clf.predict(X)
 accuracy = accuracy_score(y, predictions)
 
-# 4. Guardar las métricas en un archivo de texto
+# 4. Crear la carpeta 'results' si no existe (¡La solución mágica!)
+os.makedirs("results", exist_ok=True)
+
+# 5. Guardar las métricas en un archivo de texto
 with open("results/metrics.txt", "w") as outfile:
     outfile.write(f"Accuracy: {accuracy:.2f}\n")
 
-# 5. Generar y guardar una gráfica (Matriz de confusión)
+# 6. Generar y guardar una gráfica (Matriz de confusión)
 disp = ConfusionMatrixDisplay.from_estimator(clf, X, y, normalize="true", cmap="Blues")
 plt.savefig("results/plot.png")
 print("Evaluación completada. Métricas y gráfica guardadas en /results.")
