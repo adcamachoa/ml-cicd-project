@@ -39,4 +39,4 @@ jobs:
           hf repos create mi-primer-modelo-cicd --type model || true
           
           # 3. Subir el archivo (Sintaxis: hf upload <repo> <archivo_local> <ruta_destino>)
-          hf upload andresdcamacho/mi-primer-modelo-cicd model.pkl .
+          hf upload andresdcamacho/mi-primer-modelo-cicd model.pkl
